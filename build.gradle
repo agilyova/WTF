@@ -1,23 +1,43 @@
 plugins {
     id 'java'
     id("io.freefair.lombok") version "8.12.1"
+    id("io.qameta.allure") version "2.12.0"
 }
 
 group = 'org.example'
 version = '1.0-SNAPSHOT'
 
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
 repositories {
     mavenCentral()
 }
 
+configurations {
+    agent {
+        canBeResolved = true
+        canBeConsumed = true
+    }
+}
+
 dependencies {
+    agent "org.aspectj:aspectjweaver:1.9.21"
+
     implementation 'io.rest-assured:rest-assured:5.5.0'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.18.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
+    implementation "io.qameta.allure:allure-rest-assured"
+    implementation platform("io.qameta.allure:allure-bom:2.25.0")
 
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.assertj:assertj-core:3.27.3'
+    testImplementation "io.qameta.allure:allure-junit5"
 }
 
 test {
     useJUnitPlatform()
+    jvmArgs = ["-javaagent:${configurations.agent.singleFile}"]
 }

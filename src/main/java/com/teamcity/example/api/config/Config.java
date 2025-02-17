@@ -10,8 +10,8 @@ public class Config {
   private Properties properties;
 
   private Config() {
-        properties = new Properties();
-        loadProperties(CONFIG_PROPERTIES);
+    properties = new Properties();
+    loadProperties(CONFIG_PROPERTIES);
   }
 
   public static Config getConfig() {
@@ -25,14 +25,14 @@ public class Config {
     return properties.getProperty(key);
   }
 
-  private void  loadProperties(String fileName) {
+  private void loadProperties(String fileName) {
     try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName)) {
       if (inputStream == null) {
         System.out.println("File not found " + fileName);
       }
       properties.load(inputStream);
     } catch (IOException e) {
-      throw new RuntimeException("",e);
+      throw new RuntimeException("", e);
     }
   }
 }

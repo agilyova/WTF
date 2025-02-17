@@ -1,12 +1,13 @@
 package com.teamcity.example.api.requests;
 
 import com.teamcity.example.api.enums.Endpoint;
+import com.teamcity.example.api.generators.TestDataStorage;
 import com.teamcity.example.api.models.BaseModel;
 import io.restassured.specification.RequestSpecification;
 import org.apache.http.HttpStatus;
 
 @SuppressWarnings("unchecked")
-public class CheckedBase<T extends BaseModel> extends Request implements CrudInterface{
+public class CheckedBase<T extends BaseModel> extends Request implements CrudInterface {
   private final UncheckedBase uncheckedBase = new UncheckedBase(spec, endpoint);
 
   public CheckedBase(RequestSpecification spec, Endpoint endpoint) {
@@ -15,12 +16,14 @@ public class CheckedBase<T extends BaseModel> extends Request implements CrudInt
 
   @Override
   public T create(BaseModel model) {
-    return (T) uncheckedBase
+    var createdModel = (T) uncheckedBase
       .create(model)
       .then()
       .statusCode(HttpStatus.SC_OK)
       .extract()
       .as(endpoint.getModelClass());
+    TestDataStorage.getStorage().addCreatedEntity(endpoint, createdModel);
+    return createdModel;
   }
 
   @Override
